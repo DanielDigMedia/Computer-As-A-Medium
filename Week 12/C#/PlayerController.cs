@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    //how to define a variable
-    //1. access modifier: public or private
-    //2. data type: int, float, bool, string
-    //3. variable name: camelCase
-    //4. value: optional
+
+    public int lives;
+
+    private GameManager gameManager;
 
     private float playerSpeed;
     private float horizontalInput;
@@ -18,28 +17,42 @@ public class Player : MonoBehaviour
     private float verticalScreenLimit = 6.5f;
 
     public GameObject bulletPrefab;
+    public GameObject explosionPrefab;
 
+    // Start is called before the first frame update
     void Start()
     {
         playerSpeed = 6f;
-        //This function is called at the start of the game
-        
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        lives = 3;
+        gameManager.ChangeLivesText(lives);
     }
 
+    // Update is called once per frame
     void Update()
     {
-        //This function is called every frame; 60 frames/second
         Movement();
         Shooting();
+    }
 
+    public void LoseALife()
+    {
+        //lives = lives - 1;
+        //lives -= 1;
+        lives--;
+        gameManager.ChangeLivesText(lives);
+        if (lives == 0)
+        {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Destroy(this.gameObject);
+        }
     }
 
     void Shooting()
     {
-        //if the player presses the SPACE key, create a projectile
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Instantiate(bulletPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+            Instantiate(bulletPrefab, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         }
     }
 
@@ -51,20 +64,19 @@ public class Player : MonoBehaviour
         //Move the player
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * Time.deltaTime * playerSpeed);
         //Player leaves the screen horizontally
-        if(transform.position.x > horizontalScreenLimit || transform.position.x <= -horizontalScreenLimit)
+        if (transform.position.x > horizontalScreenLimit || transform.position.x <= -horizontalScreenLimit)
         {
             transform.position = new Vector3(transform.position.x * -1, transform.position.y, 0);
         }
         //Player cannot move above the middle of the screen
-        if(transform.position.y > 0)
+        if (transform.position.y > 0)
         {
-        transform.position = new Vector3(transform.position.x, 0, 0);
+            transform.position = new Vector3(transform.position.x, 0, 0);
         }
         //Player cannot move below the bottom of the screen
-        else if(transform.position.y < -verticalScreenLimit)
+        else if (transform.position.y < -verticalScreenLimit)
         {
-        transform.position = new Vector3(transform.position.x, -verticalScreenLimit, 0);
+            transform.position = new Vector3(transform.position.x, -verticalScreenLimit, 0);
         }
     }
-
 }

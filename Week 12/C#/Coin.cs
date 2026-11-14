@@ -5,13 +5,15 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class Coin : MonoBehaviour
 {
+    private GameManager gameManager;
+
     [SerializeField] float downwardSpeed = 1f;
     [SerializeField] private string targetTag = "Player";
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -29,7 +31,7 @@ public class Coin : MonoBehaviour
     {
         if (other.CompareTag(targetTag))
         {
-            GameManager.AddPoint();
+            gameManager.AddScore(1);
             Destroy(this.gameObject);
         }
     }
