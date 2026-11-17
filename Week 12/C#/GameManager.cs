@@ -18,19 +18,20 @@ public class GameManager : MonoBehaviour
     public float horizontalScreenSize;
     public float verticalScreenSize;
 
-    public int score;
+    [SerializeField] private TMP_Text scoreText;
+    private int score = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         horizontalScreenSize = 10f;
         verticalScreenSize = 6.5f;
-        score = 0;
         Instantiate(playerPrefab, transform.position, Quaternion.identity);
         CreateSky();
         InvokeRepeating("CreateEnemy", 2, 3);
         InvokeRepeating("CreateEnemyTwo", 4, 6);
         InvokeRepeating("CreateCoin", 2, 4);
+        UpdateScoreUI();
     }
 
     // Update is called once per frame
@@ -67,10 +68,17 @@ public class GameManager : MonoBehaviour
     {
         score = score + earnedScore;
         Debug.Log("Score:" + score);
+        UpdateScoreUI();
     }
 
     public void ChangeLivesText (int currentLives)
     {
         livesText.text = "Lives: " + currentLives;
     }
+
+    private void UpdateScoreUI()
+    {
+        scoreText.text = "Score: " + score.ToString();
+    }
+    
 }
